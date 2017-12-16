@@ -1,0 +1,87 @@
+{% assign lable_sale = false %}
+{% if product.compare_at_price_min > product.price_min %}
+{% assign lable_sale = true %}
+{% endif %}
+
+{% assign lable_out = true %}
+{% if product.available  %}
+{% assign lable_out = false %}
+{% endif %}
+
+<div class="grid-item product-item col-sm-6" id="product-{{ product.id }}">
+
+  {% comment %}
+  Link to your product with the 'within: collection' filter for the link to be aware of the collection.
+  This allows you to create collection-based navigation on the product page.
+
+  Results of using 'within: collection':
+  - Instead of a URL with /products/product-handle
+  you would get /collections/collection-handle/products/product-handle
+
+  For more info on navigation within a collection
+  - http://docs.shopify.com/support/your-store/collections/how-to-navigate-within-a-collection
+
+  {% endcomment %}
+
+  <div class="product-inner {% if lable_out %} out-stock-product {% endif %}">
+    
+    
+    
+    <div class="product-image">
+    {%comment%} <h3>       
+       <a class="product-title" href="{{ product.url | within: collection }}">{{ product.title }}
+       </a>      
+       <a class="product-title">{{ product.title }}
+       </a>
+      </h3> {%endcomment%}      
+      
+      {% if lable_sale or lable_out %}
+        <div class="product-label">
+          {% if lable_sale %}
+          -{{ product.compare_at_price_max | minus:product.price | times:100 | divided_by:product.compare_at_price_max |round: 0 }}%
+          {% endif %}
+          {% if lable_out %}
+          <span {% if settings.enable_multilang %}data-translate="product.out_of_stock"{%endif%}>{{ 'product.out_of_stock' | t }}</span>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if product.description contains "[label-icon-new]" %}
+        <div class="label-new" {% if settings.enable_multilang %}data-translate="product.label_icon_new"{%endif%}>{{ 'product.label_icon_new' | t }}</div>
+        {% endif %}    
+      
+ 
+          {% for image in product.images %}
+          <div class="responsive-images item{% if forloop.first %} active{% endif %}">
+            <a href="{{ product.url | within: collection }}"> <img src="{{ image | product_img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}"></a>
+          </div>
+          {% endfor %}
+  <h3> <a class="product-title" href="{{ product.url | within: collection }}">{{ product.title }}</a></h3> 
+   <a class="btn" href="{{ product.url | within: collection }}">Learn more</a>
+        
+      {%comment%}
+      <div role="listbox"class="col-sm-6">
+        <div class="clr">{{ product.description | truncatewords: 50,'' }}</div>
+        <div class="clr"></div>
+        {% if settings.product_add_tocart %}
+          <div class="add-to-cart">
+            {% assign variantCount = product.variants | size %}
+            <form action="/cart/add" method="post" class="variants" id="product-actions-{{ product.id }}" enctype="multipart/form-data" style="padding:0px;">    
+              {% if lable_out %}
+              <input class="add-to-cart-btn" type="submit" {% if settings.enable_multilang %}data-translate="product.detail.unavailable"{%endif%} value="{{'product.detail.unavailable' | t}}" disabled="disabled" />
+              {% else %}
+              {% if variantCount > 1 %}
+              <button class="add-to-slect-btn" type="button" onclick="window.location.href='{{product.url}}'" {% if settings.enable_multilang %}data-translate="product.detail.sellect_option"{%endif%}>{{'product.detail.sellect_option' | t}}</button>
+              {% else %}
+              <input type="hidden" name="id" value="{{ product.variants[0].id }}" />      
+              <button class="btn" type="submit" {% if settings.enable_multilang %}data-translate="product.detail.add_cart"{%endif%}>{{'product.detail.add_book' | t}}</button>
+              {% endif %}
+              {% endif %}
+            </form>
+          </div>
+          {% endif %}
+      </div>
+      {%endcomment%}
+    </div>      
+  </div>
+      <div class="clr"></div>
+</div>
