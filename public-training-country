@@ -1,0 +1,31 @@
+  <div class="publick-can custom-sidebar1">   
+  {% assign categories = '' %}
+  {% for tag in collections['public-training'].tags %} 
+  {%if tag contains 'country_'%}
+  {% capture categories1 %}{% unless categories1 == blank  %}{{ categories1 }}|{% endunless %}{{ tag | split: '_' | first }}{% endcapture %}
+  {% endif %}
+  {% endfor %}
+  {% assign cat_array1 = categories1 | split: '|' | uniq %}
+  
+  <div class="grid-uniform">    
+    {% for cat_item in cat_array1 %}
+    <h6 class="h3">  {{cat_array1}} <span class="clear-country"> clear </span></h6>    
+    <select  class="country-list advanced-filters {{cat_item}}"> 
+      <option>Select</option>
+      {% for tag in collections['public-training'].tags %} 
+      {% assign cat = tag | split: '_' | first %}
+      {% if cat != tag and cat_item == cat %}
+      {% if current_tags contains tag %}
+      
+      <option data-href="collections/{{collection.handle}}/{{ tag | handle }}" class="{{ tag | handle }} country-option advanced-filter active-filter" data-group="{{ cat_item }}" data-handle="{{ tag | handle }}" selected>{{ tag | remove_first: cat_item | remove_first: '_' |replace: '-',' '| link_to_remove_tag: tag }}</option>
+      {% else %}
+        <option data-href="collections/{{collection.handle}}/{{ tag | handle }}" class="{{ tag | handle }} country-option advanced-filter" data-group="{{ cat_item }}" data-handle="{{ tag | handle }}">{{ tag | remove_first: cat_item  | remove_first: '_' |replace: '-',' ' |link_to_add_tag: tag }}</option>
+      {% endif %}
+      {%endif%}
+      {%endfor%}
+    </select>
+    {%endfor%}
+ </div>
+
+</div>
+
