@@ -1,0 +1,230 @@
+{% assign display_image_cat = section.settings.display_image_cat %}
+{% assign image_category = section.settings.image_category %}
+{% assign collection_banner_title = section.settings.collection_banner_title %}
+{% assign collection_height_image = section.settings.collection_height_image %}
+
+{% assign sidebar_categories_title = section.settings.sidebar_categories_title %}
+
+
+{% assign collection_results_per_row = section.settings.collection_results_per_row %}
+
+{% assign collection_infinite_scrolling = section.settings.collection_infinite_scrolling %}
+{% assign collection_infinite_scrolling_text = section.settings.collection_infinite_scrolling_text %}
+{% assign collection_infinite_scrolling_no_more_product_text = section.settings.collection_infinite_scrolling_no_more_product_text %}
+
+
+{% if section.settings.isotope_collection_results_per_page != blank %}
+{% assign product_per_page = section.settings.isotope_collection_results_per_page %}
+{% else %}
+{% assign product_per_page = 6 %}
+{% endif %}
+
+<div class="publictraining-row-two">
+  <div class="payroll-banner">
+    <div class="row">
+      
+      <div class="col-sm-6 col-xs-6 img right">
+        <img src="{{ collection | img_url: 'original' }}"/>
+      </div>
+      
+      <div class="col-sm-6 col-xs-6 text">
+        <h1>
+          {{ collection.title }}
+        </h1>
+        <p>{{collection.description}}</p> 
+        {%if section.settings.coll_publictraining_enable%}
+        <div class="clr clearfix">   <a class="btn-2" href="{{section.settings.coll_publictraining}}">{{section.settings.coll_publictraining_text}}</a> </div>
+        {%endif%}
+      </div>
+      <div class="for-mobile col-xs-12">{{collection.description}}</div>  
+      
+    </div>
+  </div>
+
+  <div class="clearfix row collection-page custom-filter">
+    <div class="col-sm-3">
+      {%include 'public-training-country'%}
+      {%for block in section.blocks%}
+      {% if block.settings.display_blog_banner %}
+      <div class="blog_banner ">
+        <div class="blog-banner-iamge">
+          {% if block.settings.blog_banner_image  != blank %}
+          <img class="" src="{{ block.settings.blog_banner_image | img_url: '1024x1024' }}">
+          {% else %}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+        <div class="blog-banner-container">
+          <p class="blog-banner-title">
+            {% if settings.enable_multilang %}
+            <span class="lang1">{{ block.settings.blog_banner_title | split: '|' | first }}</span>
+            <span class="lang2">{{  block.settings.blog_banner_title | split: '|' | last }}</span>
+            {% else %}
+            {{  block.settings.blog_banner_title | split: '|' | first }}
+            {% endif %}
+          </p>
+          <a href="{{ block.settings.blog_banner_link }}">{{ block.settings.blog_banner_textlink }} <i class="cs-font clever-icon-arrow-right-bold"></i></a>
+        </div>
+      </div>
+      {% endif %}
+      {%endfor%}
+    </div>
+
+    <div class="col-sm-9 resource-right">
+      {% paginate collection.products by 4 %}
+      <div class="EndlessScroll">
+        <div class="row">
+          {% for product in collection.products %}
+          {% include 'public-traing-product-2row' %}
+          {% endfor %}
+          {% if paginate.pages > 1 %}
+          {% if paginate.next %}
+          <div class="paginationbilal">
+            <a href="{{ paginate.next.url }}">Loading More</a>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+      </div>
+      {% endpaginate%}
+    </div>
+  </div>
+
+  <script>   
+    $(document).ready(function(){
+      ajaxify({
+        //nkParent: '.pagination-page',
+        // parentContainer: '#directory'
+      })
+    });
+
+  </script> 
+  <script>
+    {% if section.settings.enable_col_left %}
+    jQuery('body').addClass('colection-left');
+    {% else %}
+    jQuery('body').addClass('full-layout');
+    {% endif %}
+  </script>
+
+  <script>
+    window.onscroll = function (e) {  
+      var h1 = $(window).scrollTop() + $(window).height() + 200 ;
+      var h2 = $(document).height();
+      //   console.log(h1);
+      //   console.log(h2);
+
+      if(h1 >= h2) {
+        //       $(".custom-sidebar").addClass("sticky-fix-bottom");
+      }else{
+        //     $(".custom-sidebar").removeClass("sticky-fix-bottom");
+      }
+
+      // called when the window is scrolled.  
+      var scroll = $(window).scrollTop();
+      if(scroll >= 500){
+        $(".custom-sidebar").addClass("sticky-fix");     
+      }else{
+        $(".custom-sidebar").removeClass("sticky-fix"); 
+      }
+
+      if(h1 >= h2) {
+        //       $(".custom-sidebar").addClass("sticky-fix-bottom");
+      }else{
+        $(".custom-sidebar").css("top", scroll+"px");
+        //     $(".custom-sidebar").removeClass("sticky-fix-bottom");
+      }
+      //   $(".custom-sidebar").css("top", scroll+"px");
+    } 
+
+  </script>
+
+
+
+  <style>
+    @media (min-width: 992px){
+      .item-col-5{width:20%;}
+    }
+
+  </style>
+
+  <!-- <script>
+$(".sidebar").stick_in_parent({
+offset_top: 15
+});
+</script> -->
+  {% schema %}
+  {
+  "name": "Collection pages",
+  "settings": [ 
+  {
+  "type": "checkbox",
+  "id": "coll_publictraining_enable",
+  "label": "Enable link",
+  "default": true
+  },
+  {
+  "type": "text",
+  "id": "coll_publictraining_text",
+  "label": "Text for link"        
+  },
+  {
+  "type": "url",
+  "id": "coll_publictraining",
+  "label": "url"        
+  }
+  ],
+  "blocks": [
+  {
+  "type": "image",
+  "name": "Image slide",
+  "settings": [
+  {
+  "type": "checkbox",
+  "id": "display_blog_banner",
+  "label": "Show Banner  ?"
+  },
+  {
+  "type": "image_picker",
+  "id": "blog_banner_image",
+  "label": "Banner Images "
+  },
+  {
+  "type": "text",
+  "id": "blog_banner_title",
+  "label": "Title"
+  },
+  {
+  "type": "text",
+  "id": "blog_banner_link",
+  "label": "Link"
+  },
+  {
+  "type": "text",
+  "id": "blog_banner_textlink",
+  "label": "Text Link"
+  }	
+
+
+  ]
+  }
+  ]
+  }
+  {% endschema %}
+  <style>
+    .product-item .btn-book{
+      background-color: #fff;
+      border: 2px solid #ffffff;
+      border-radius: 8px;
+      color: #9933ff;
+      display: block;
+      font-size: 18px;
+      font-weight: normal;
+      height: 40px;
+      line-height: 40px;
+      max-width: 150px;
+      padding: 0 20px;
+      text-decoration: underline;
+      width: 100%;}
+
+  </style>
